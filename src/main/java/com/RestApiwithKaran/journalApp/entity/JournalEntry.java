@@ -11,6 +11,15 @@ public class JournalEntry { // POJO - plain old java object
         this.content = content;
     }
 
+    @Override
+    public String toString() {
+        return "JournalEntry{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                '}';
+    }
+
     public long getId(){
         return id;
     }
