@@ -1,14 +1,33 @@
 package com.RestApiwithKaran.journalApp.entity;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
+
+@Document(collection = "journal_entries") //tells that this class is a mapped entity to a collection in mongodb
 public class JournalEntry { // POJO - plain old java object
-    private long id;
+    //We need to map this class to a collection in Database -- ORM object relational mapping,
+    /*An instance of journal entry will be equal to a document or a row in collection in mongodb*/
+    @Id // A unique key for our documents in collection
+    private ObjectId id; //ObjectId is a datatype of mongodb
     private String title;
     private String content;
+    private Date date;
 
-    public JournalEntry(long id, String title, String content) {
+    /*public JournalEntry(String id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
+    }*/
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override
@@ -20,10 +39,10 @@ public class JournalEntry { // POJO - plain old java object
                 '}';
     }
 
-    public long getId(){
+    public String getId(){
         return id;
     }
-    public void setId(long id){
+    public void setId(String id){
         this.id = id;
     }
     public String getTitle(){
