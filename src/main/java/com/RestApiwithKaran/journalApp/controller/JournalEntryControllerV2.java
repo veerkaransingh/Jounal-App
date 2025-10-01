@@ -21,8 +21,12 @@ public class JournalEntryControllerV2 {
 
 
     @GetMapping //("/abc")
-    public List<JournalEntry> getAll(){ //list of journal entry
-        return journalEntryService.getAll();
+    public ResponseEntity<?> getAll(){ //list of journal entry
+        List<JournalEntry> all = journalEntryService.getAll();
+        if(all != null && !all.isEmpty()){
+            return new ResponseEntity<>(all, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
@@ -52,13 +56,13 @@ public class JournalEntryControllerV2 {
     }
 
     @DeleteMapping("id/{myId}")
-    public boolean deleteJournalEntryById(@PathVariable ObjectId myId){
+    public ResponseEntity<?> deleteJournalEntryById(@PathVariable ObjectId myId){
         journalEntryService.deleteById(myId); //
-        return true;
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/id/{id}")
-    public JournalEntry updateJournalById(@PathVariable ObjectId id, @RequestBody JournalEntry newEntry){
+    public ResponseEntity<?> updateJournalById(@PathVariable ObjectId id, @RequestBody JournalEntry newEntry){
 
         // if only title is getting changed, then only title would be modified in the db,
         // and if only content is getting changed ,then only content would be changed in the database.
@@ -67,8 +71,9 @@ public class JournalEntryControllerV2 {
         if(old != null){
             old.setTitle(newEntry.getTitle()!= null && !newEntry.getTitle().equals("") ? newEntry.getTitle() : old.getTitle());
             old.setContent(newEntry.getContent()!= null && !newEntry.getContent().equals("") ? newEntry.getContent() : old.getContent());
+            journalEntryService.saveEntry(old);
+            return new ResponseEntity<>(old, HttpStatus.OK);
         }
-        journalEntryService.saveEntry(old);
-        return old;
+       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
