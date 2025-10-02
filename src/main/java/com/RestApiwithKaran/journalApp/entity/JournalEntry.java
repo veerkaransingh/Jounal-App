@@ -1,5 +1,7 @@
 package com.RestApiwithKaran.journalApp.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,13 +19,20 @@ public class JournalEntry { // POJO - plain old java object
     private String content;
     private LocalDateTime date;
 
+    @Getter
+    @Setter
+
+
     /*public JournalEntry(String id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
     }*/
 
-    public LocalDateTime getDate() {
+    /*Project lombok is a library used in java which helps in reducing boilerplate code(getters, setters..)
+    It achieves this by generating this code automatically during compilation, based on annotations we add to our java class.*/
+
+    /*public LocalDateTime getDate() {
         return date;
     }
 
@@ -59,6 +68,6 @@ public class JournalEntry { // POJO - plain old java object
     }
     public void setContent(String content){
         this.content = content;
-    }
+    }*/
 
 }
