@@ -1,7 +1,6 @@
 package com.RestApiwithKaran.journalApp.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,17 +9,25 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Document(collection = "journal_entries") //tells that this class is a mapped entity to a collection in mongodb
+
+@Data //is equivalent to @getter, @setter, @RequiredArgsConstructor, @ToString, @EqualsAndHashCode
+/*@Getter // Intelli j will understand these annotations with the help of lombok.
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
+@Builder */
+
 public class JournalEntry { // POJO - plain old java object
     //We need to map this class to a collection in Database -- ORM object relational mapping,
     /*An instance of journal entry will be equal to a document or a row in collection in mongodb*/
     @Id // A unique key for our documents in collection
     private ObjectId id; //ObjectId is a datatype of mongodb
+    @NonNull
     private String title;
     private String content;
     private LocalDateTime date;
-
-    @Getter
-    @Setter
 
 
     /*public JournalEntry(String id, String title, String content) {
