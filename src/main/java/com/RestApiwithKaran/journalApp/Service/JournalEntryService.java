@@ -2,6 +2,7 @@ package com.RestApiwithKaran.journalApp.Service;
 
 import com.RestApiwithKaran.journalApp.Repository.JournalEntryRepository;
 import com.RestApiwithKaran.journalApp.entity.JournalEntry;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import java.util.Optional;
 // Service will call the repository
 
 @Component //now spring will create an object of this class and keep it inside
+@Slf4j
 public class JournalEntryService {
     @Autowired // We are injecting JournalEntryRepository in this class
     private JournalEntryRepository journalEntryRepository;
