@@ -2,12 +2,14 @@ package com.RestApiwithKaran.journalApp.Service;
 
 import com.RestApiwithKaran.journalApp.Repository.JournalEntryRepository;
 import com.RestApiwithKaran.journalApp.entity.JournalEntry;
+import com.RestApiwithKaran.journalApp.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +26,65 @@ public class JournalEntryService {
     handles it by itself at runtime
      */
 
-    public void saveEntry(JournalEntry journalEntry){ //journalEntry is an object of type JournalEntry
-        journalEntryRepository.save(journalEntry);
+    @Autowired
+    private UserService userService; // Injecting an instance of UserService class
+
+    public void saveEntry(JournalEntry journalEntry, String userName){ //journalEntry is an object of type JournalEntry
+        /*This method saveEntry saves a new journal entry in MongoDB and also links that entry to a specific user in the DB
+           saveEntry(new JournalEntry("My Day", "Learned Spring Boot"), "karan123");
+         */
+
+
+        User user = userService.findByUserName(userName);
+        /*find the user who is creating this journal entry
+        {
+                "id": "u101",
+                "userName": "karan123",
+                "email": "karan@example.com",
+                "journalEntries": []
+         }
+
+         */
+
+
+        journalEntry.setDate(LocalDateTime.now());  //setting date in the coming journal entry
+
+        /* Adds the current date and time to the journal entry before saving.
+        {
+         "title": "My Day",
+         "content": "Learned Spring Boot",
+         "date": "2025-10-05T12:30:00"
+        }
+         */
+
+
+        JournalEntry saved = journalEntryRepository.save(journalEntry); //the entry saved in the db
+
+        /* After saving, saved would look like
+        {
+          "id": "j102",
+          "title": "My Day",
+          "content": "Learned Spring Boot",
+          "date": "2025-10-05T12:30:00"
+        }
+         */
+
+        user.getJournalEntries().add(saved);// added saved journal entry to the list of entries of a user
+        /* Every user likely has a list/array of their journal entries.
+           (For example, List<JournalEntry> journalEntries; inside the User class.)
+           This line adds the newly saved journal entry to that user’s list
+           "journalEntries": [
+            {
+              "id": "j102",
+              "title": "My Day",
+              "content": "Learned Spring Boot",
+              "date": "2025-10-05T12:30:00"
+            }
+            ]
+         */
+
+
+        userService.saveEntry(user);// added user to the db with added journal entries associated to it
 
     }
 
@@ -38,7 +97,16 @@ public class JournalEntryService {
     public Optional<JournalEntry> findById(ObjectId id){ //Optional -- may contain some value or not
         return journalEntryRepository.findById(id);
     }
-    public void deleteById(ObjectId id){
+    public void deleteById(ObjectId id, String userName){
+        User user = userService.findByUserName(userName);
+//        user.getJournalEntries().removeIf(x -> x.getId().equals(id));
+
+        for(JournalEntry journalEntry : user.getJournalEntries()){
+            if(id == journalEntry.getId()){
+                user.getJournalEntries().remove(journalEntry);
+            }
+        }
+        userService.saveEntry(user);
         journalEntryRepository.deleteById(id);
     }
 
