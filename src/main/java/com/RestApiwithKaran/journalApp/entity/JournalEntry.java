@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Document(collection = "journal_entries") //tells that this class is a mapped entity to a collection in mongodb
-
+@NoArgsConstructor
 @Data //is equivalent to @getter, @setter, @RequiredArgsConstructor, @ToString, @EqualsAndHashCode
 /*@Getter // Intelli j will understand these annotations with the help of lombok.
 @Setter
