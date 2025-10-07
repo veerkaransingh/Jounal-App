@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,11 @@ public class JournalEntryService {
     @Autowired
     private UserService userService; // Injecting an instance of UserService class
 
+    @Transactional
+    /* Now everything under this annotation will be treated as single operation, and if any
+    operation fails, then those ones which were successfull would also roll back.
+     */
+
     public void saveEntry(JournalEntry journalEntry, String userName){ //journalEntry is an object of type JournalEntry
         /*This method saveEntry saves a new journal entry in MongoDB and also links that entry to a specific user in the DB
            saveEntry(new JournalEntry("My Day", "Learned Spring Boot"), "karan123");
@@ -40,7 +46,7 @@ public class JournalEntryService {
         {
                 "id": "u101",
                 "userName": "karan123",
-                "email": "karan@example.com",
+                "password": "karanexam",
                 "journalEntries": []
          }
 
@@ -84,6 +90,8 @@ public class JournalEntryService {
          */
 
 
+        user.setUserName(null); // now this will throw null pointer exception as userName can't be null as we annotated in user class
+
         userService.saveEntry(user);// added user to the db with added journal entries associated to it
 
     }
@@ -99,13 +107,7 @@ public class JournalEntryService {
     }
     public void deleteById(ObjectId id, String userName){
         User user = userService.findByUserName(userName);
-//        user.getJournalEntries().removeIf(x -> x.getId().equals(id));
-
-        for(JournalEntry journalEntry : user.getJournalEntries()){
-            if(id == journalEntry.getId()){
-                user.getJournalEntries().remove(journalEntry);
-            }
-        }
+        user.getJournalEntries().removeIf(x -> x.getId().equals(id));
         userService.saveEntry(user);
         journalEntryRepository.deleteById(id);
     }
