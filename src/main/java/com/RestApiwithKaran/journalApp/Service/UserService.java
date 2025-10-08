@@ -1,0 +1,50 @@
+package com.RestApiwithKaran.journalApp.Service;
+
+import com.RestApiwithKaran.journalApp.Repository.JournalEntryRepository;
+import com.RestApiwithKaran.journalApp.Repository.UserRepository;
+import com.RestApiwithKaran.journalApp.entity.JournalEntry;
+import com.RestApiwithKaran.journalApp.entity.User;
+import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
+import java.util.Optional;
+
+// Service class holds all the logic
+// Controller will call the service
+// Service will call the repository
+
+@Component //now spring will create an object of this class and keep it inside
+@Slf4j
+public class UserService {
+    @Autowired // We are injecting JournalEntryRepository in this class
+    private UserRepository userRepository;
+    /* As JournalEntryRepository is an interface, so there must be an implementation of that and Spring
+    handles it by itself at runtime
+     */
+
+    public void saveEntry(User user){ //user is an object of type User
+       userRepository.save(user);
+
+    }
+
+    @GetMapping
+    public List<User> getAll(){
+        return userRepository.findAll();
+    }
+
+
+    public Optional<User> findById(ObjectId id){ //Optional -- may contain some value or not
+        return userRepository.findById(id);
+    }
+    public void deleteById(ObjectId id){
+        userRepository.deleteById(id);
+    }
+
+    public  User findByUserName(String userName){
+        return userRepository.findByUserName(userName);
+    }
+}
