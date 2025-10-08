@@ -43,6 +43,7 @@ public class JournalEntryControllerV2 {
             journalEntryService.saveEntry(myEntry, userName); // now two things will go into saveEntry myEntry ( from Request Body), userName
             return new ResponseEntity<>(myEntry,HttpStatus.CREATED);
         } catch (Exception e){
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
