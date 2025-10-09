@@ -83,7 +83,7 @@ public class JournalEntryService {
             {
               "id": "j102",
               "title": "My Day",
-              "content": "Learned Spring Boot",
+              "content": "Learnt Spring Boot",
               "date": "2025-10-05T12:30:00"
             }
             ]
