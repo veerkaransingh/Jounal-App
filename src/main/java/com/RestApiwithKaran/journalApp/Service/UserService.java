@@ -7,9 +7,12 @@ import com.RestApiwithKaran.journalApp.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,12 +29,20 @@ public class UserService {
     handles it by itself at runtime
      */
 
+    public static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public void saveEntry(User user){ //user is an object of type User
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList("USER"));
        userRepository.save(user);
 
     }
 
-    @GetMapping
+    public void saveNewUser(User user){
+        userRepository.save(user);
+    }
+
+
     public List<User> getAll(){
         return userRepository.findAll();
     }
