@@ -35,13 +35,12 @@ public class JournalEntryService {
     operation fails, then those ones which were successfull would also roll back.
      */
 
-    public void saveEntry(JournalEntry journalEntry, String userName){ //journalEntry is an object of type JournalEntry
+    public void saveEntry(JournalEntry journalEntry, String userName) { //journalEntry is an object of type JournalEntry
         /*This method saveEntry saves a new journal entry in MongoDB and also links that entry to a specific user in the DB
            saveEntry(new JournalEntry("My Day", "Learned Spring Boot"), "karan123");
          */
-
-
-        User user = userService.findByUserName(userName);
+        try {
+            User user = userService.findByUserName(userName);
         /*find the user who is creating this journal entry
         {
                 "id": "u101",
@@ -53,7 +52,7 @@ public class JournalEntryService {
          */
 
 
-        journalEntry.setDate(LocalDateTime.now());  //setting date in the coming journal entry
+            journalEntry.setDate(LocalDateTime.now());  //setting date in the coming journal entry
 
         /* Adds the current date and time to the journal entry before saving.
         {
@@ -64,7 +63,7 @@ public class JournalEntryService {
          */
 
 
-        JournalEntry saved = journalEntryRepository.save(journalEntry); //the entry saved in the db
+            JournalEntry saved = journalEntryRepository.save(journalEntry); //the entry saved in the db
 
         /* After saving, saved would look like
         {
@@ -75,7 +74,7 @@ public class JournalEntryService {
         }
          */
 
-        user.getJournalEntries().add(saved);// added saved journal entry to the list of entries of a user
+            user.getJournalEntries().add(saved);// added saved journal entry to the list of entries of a user
         /* Every user likely has a list/array of their journal entries.
            (For example, List<JournalEntry> journalEntries; inside the User class.)
            This line adds the newly saved journal entry to that user’s list
@@ -83,20 +82,22 @@ public class JournalEntryService {
             {
               "id": "j102",
               "title": "My Day",
-              "content": "Learnt Spring Boot",
+              "content": "Learned Spring Boot",
               "date": "2025-10-05T12:30:00"
             }
             ]
          */
 
 
-        user.setUserName(null); // now this will throw null pointer exception as userName can't be null as we annotated in user class
+           // user.setUserName(null); // now this will throw null pointer exception as userName can't be null as we annotated in user class
 
-        userService.saveEntry(user);// added user to the db with added journal entries associated to it
+            userService.saveEntry(user);// added user to the db with added journal entries associated to it
 
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new RuntimeException("An error occured while saving the entry." + e);
+        }
     }
-
-    @GetMapping
     public List<JournalEntry> getAll(){
         return journalEntryRepository.findAll();
     }
