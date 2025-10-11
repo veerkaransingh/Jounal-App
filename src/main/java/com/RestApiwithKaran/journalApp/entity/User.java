@@ -30,4 +30,6 @@ public class User{
     //list (journalEntries) will keep reference of all those entries which are there in Journal Entru entity
     private List<JournalEntry> journalEntries = new ArrayList<>(); //whenever a user will be initiated, there will be an
     // empty list of Journal entries (non null)
+
+    private List<String> roles; // What roles a user can have (corresponding to this entity) in a single document
 }
