@@ -1,5 +1,6 @@
 package com.RestApiwithKaran.journalApp.controller;
 
+import com.RestApiwithKaran.journalApp.Repository.UserRepository;
 import com.RestApiwithKaran.journalApp.Service.JournalEntryService;
 import com.RestApiwithKaran.journalApp.Service.UserService;
 import com.RestApiwithKaran.journalApp.entity.JournalEntry;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -23,28 +26,30 @@ public class UserController {
    @Autowired
    private UserService userService;
 
-   @GetMapping
-   public List<User> getAllUsers(){
-      return userService.getAll();
-   }
-   @PostMapping
-   public void createUser(@RequestBody User user){
-      userService.saveEntry(user);
-   }
+   @Autowired
+   private UserRepository userRepository;
+   @PutMapping //now Authenticated
+   public ResponseEntity<?> updateUser(@RequestBody User user){
 
-   @PutMapping("/{userName}")
-   public ResponseEntity<?> updateUser(@RequestBody User user,@PathVariable String userName){
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      /* Whenever a user is authenticated, his/her details are saved in SecurityContextHolder
+      Now in postman, a user will type username and password, password will be matched with one in the db, if same,
+      user will be allowed to do modifications!
+       */
+      String userName = authentication.getName();
       User userInDb = userService.findByUserName(userName); // will find via PathVariable inside db and then updates it
-
-      // Code for only updating
-      if(userInDb != null){
-         userInDb.setUserName(user.getUserName());
-         userInDb.setPassword(user.getPassword());
-         userService.saveEntry(userInDb);
-      }
+      userInDb.setUserName(user.getUserName());
+      userInDb.setPassword(user.getPassword());
+      userService.saveEntry(userInDb);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-
    }
 
+
+   @DeleteMapping
+   public ResponseEntity<?> deleteUserById(){
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      userRepository.deleteByUserName(authentication.getName());
+
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
    }
+}
