@@ -16,4 +16,8 @@ public interface UserRepository extends MongoRepository <User, ObjectId> {
      */
 
     User findByUserName(String username); //Declared a method which will find username in the db which has been modified
+
+    void deleteByUserName(String username);
 }
+
+
