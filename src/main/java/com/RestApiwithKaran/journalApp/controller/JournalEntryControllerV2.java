@@ -8,6 +8,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -25,9 +27,15 @@ public class JournalEntryControllerV2 {
     private UserService userService;
 
 
-    @GetMapping("{userName}") //("/abc")
-    public ResponseEntity<?> getAllJournalEntriesofUser(@PathVariable String userName){ //list of journal entry
-        User user = userService.findByUserName(userName); // will look for userName passed by path variable and assign to user variable
+    @GetMapping() //("/abc")
+    public ResponseEntity<?> getAllJournalEntriesofUser(){ //list of journal entry
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         /* Whenever a user is authenticated, his/her details are saved in SecurityContextHolder
+      Now in postman, a user will type username and password, password will be matched with one in the db, if same,
+      user will be allowed to do modifications!
+       */
+        String userName = authentication.getName();
+        User user = userService.findByUserName(userName); // will look for userName
         List<JournalEntry> all = user.getJournalEntries(); // will get all the journal entries of this particular user
         if(all != null && !all.isEmpty()){
             return new ResponseEntity<>(all, HttpStatus.OK);
@@ -35,10 +43,16 @@ public class JournalEntryControllerV2 {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("{userName}")
-    public ResponseEntity<JournalEntry> createEntry(@RequestBody JournalEntry myEntry, @PathVariable String userName){ // myEntry is an instance of journal entry
+    @PostMapping
+    public ResponseEntity<JournalEntry> createEntry(@RequestBody JournalEntry myEntry){ // myEntry is an instance of journal entry
 
         try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+             /* Whenever a user is authenticated, his/her details are saved in SecurityContextHolder
+      Now in postman, a user will type username and password, password will be matched with one in the db, if same,
+      user will be allowed to do modifications!
+       */
+            String userName = authentication.getName();
             myEntry.setDate(LocalDateTime.now());
             journalEntryService.saveEntry(myEntry, userName); // now two things will go into saveEntry myEntry ( from Request Body), userName
             return new ResponseEntity<>(myEntry,HttpStatus.CREATED);
