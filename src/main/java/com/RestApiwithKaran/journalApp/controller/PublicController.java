@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController // this class became a component with additional functionality
 //whatever endpoints or URL paths will be there, whatever they will return, will be automatically convert to JSON format
 @RequestMapping("/public")
-public class PublicController {
+public class   PublicController {
 
 
     @Autowired
