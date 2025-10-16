@@ -22,6 +22,7 @@ public class JournalEntryControllerV2 {
 
     @Autowired
     private JournalEntryService journalEntryService; //an instance of JournalEntryService
+    //
 
     @Autowired
     private UserService userService;
