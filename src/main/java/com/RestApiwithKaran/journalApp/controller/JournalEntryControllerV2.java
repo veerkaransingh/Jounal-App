@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/journal")
@@ -67,13 +68,22 @@ public class JournalEntryControllerV2 {
     //ResponseEntity lets you send both data and the correct HTTP code.
     public ResponseEntity<JournalEntry> getJournalEntryById(@PathVariable ObjectId myId){
         //For sending a response code
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userService.findByUserName(userName);
+        List<JournalEntry> collect = user.getJournalEntries().stream().filter(x -> x.getId().equals(myId)).collect(Collectors.toList());
+
+
         /*Optional is a container (a wrapper box) introduced in Java 8.
             It can either:
                  Contain a value (JournalEntry) → means "found".
                  Be empty → means "not found".*/
-        Optional<JournalEntry> journalEntry = journalEntryService.findById(myId);  // Now the variable journalEntry doesn’t hold the object directly.Instead, it holds an Optional box around that object
-        if (journalEntry.isPresent()) {
-            return new ResponseEntity<>(journalEntry.get(), HttpStatus.OK);
+        if(!collect.isEmpty()) {
+
+            Optional<JournalEntry> journalEntry = journalEntryService.findById(myId);  // Now the variable journalEntry doesn’t hold the object directly.Instead, it holds an Optional box around that object
+            if (journalEntry.isPresent()) {
+                return new ResponseEntity<>(journalEntry.get(), HttpStatus.OK);
+            }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         //return journalEntryService.findById(myId).orElse(null); ----- if got the id, then we are sending it, and if not, we are sending null!!!
