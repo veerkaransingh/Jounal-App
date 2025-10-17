@@ -8,7 +8,6 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -91,7 +90,7 @@ public class JournalEntryService {
 
            // user.setUserName(null); // now this will throw null pointer exception as userName can't be null as we annotated in user class
 
-            userService.saveEntry(user);// added user to the db with added journal entries associated to it
+            userService.saveUser(user);// added user to the db with added journal entries associated to it
 
         } catch (Exception e) {
             System.out.println(e);
@@ -109,9 +108,13 @@ public class JournalEntryService {
     public void deleteById(ObjectId id, String userName){
         User user = userService.findByUserName(userName);
         user.getJournalEntries().removeIf(x -> x.getId().equals(id));
-        userService.saveEntry(user);
+        userService.saveNewUser(user);
         journalEntryRepository.deleteById(id);
     }
 
+    public List<JournalEntry> findByUserName(String userName) {
+        User user = userService.findByUserName(userName);
+        return user.getJournalEntries();
+    }
 
 }
