@@ -1,22 +1,14 @@
 package com.RestApiwithKaran.journalApp.controller;
 
 import com.RestApiwithKaran.journalApp.Repository.UserRepository;
-import com.RestApiwithKaran.journalApp.Service.JournalEntryService;
 import com.RestApiwithKaran.journalApp.Service.UserService;
-import com.RestApiwithKaran.journalApp.entity.JournalEntry;
 import com.RestApiwithKaran.journalApp.entity.User;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -37,10 +29,10 @@ public class UserController {
       user will be allowed to do modifications!
        */
       String userName = authentication.getName();
-      User userInDb = userService.findByUserName(userName); // will find via PathVariable inside db and then updates it
+      User userInDb = userService.findByUserName(userName); // will find inside db and then updates it
       userInDb.setUserName(user.getUserName());
       userInDb.setPassword(user.getPassword());
-      userService.saveEntry(userInDb);
+      userService.saveNewUser(userInDb);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
    }
 
