@@ -26,7 +26,7 @@ public class JournalEntryControllerV2 {
     //
     //
 
-    //
+
 
     @Autowired
     private UserService userService;
