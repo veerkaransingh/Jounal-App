@@ -24,10 +24,6 @@ public class JournalEntryControllerV2 {
     @Autowired
     private JournalEntryService journalEntryService; //an instance of JournalEntryService
 
-
-
-
-
     @Autowired
     private UserService userService;
 
@@ -91,25 +87,39 @@ public class JournalEntryControllerV2 {
         //return journalEntryService.findById(myId).orElse(null); ----- if got the id, then we are sending it, and if not, we are sending null!!!
     }
 
-    @DeleteMapping("id/{userName}/{myId}")
-    public ResponseEntity<?> deleteJournalEntryById(@PathVariable ObjectId myId, @PathVariable String userName){
-        journalEntryService.deleteById(myId, userName);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("id/{myId}")
+    public ResponseEntity<?> deleteJournalEntryById(@PathVariable ObjectId myId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean removed = journalEntryService.deleteById(myId, username);
+        if(removed){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND );
+        }
+
     }
 
     @PutMapping("/id/{id}")
     public ResponseEntity<?> updateJournalById(@PathVariable ObjectId id, @RequestBody JournalEntry newEntry){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userService.findByUserName(userName);
+        List<JournalEntry> collect = user.getJournalEntries().stream().filter(x -> x.getId().equals(id)).collect(Collectors.toList());
+        if(!collect.isEmpty()) {
 
-        // if only title is getting changed, then only title would be modified in the db,
-        // and if only content is getting changed ,then only content would be changed in the database.
+            Optional<JournalEntry> journalEntry = journalEntryService.findById(id);  // Now the variable journalEntry doesn’t hold the object directly.Instead, it holds an Optional box around that object
+            if (journalEntry.isPresent()) {
+                JournalEntry old = journalEntry.get();
+                old.setTitle(newEntry.getTitle()!= null && !newEntry.getTitle().equals("") ? newEntry.getTitle() : old.getTitle());
+                old.setContent(newEntry.getContent()!= null && !newEntry.getContent().equals("") ? newEntry.getContent() : old.getContent());
+                journalEntryService.saveEntry(old);
 
-        JournalEntry old = journalEntryService.findById(id).orElse(null);
-       /* if(old != null){
-            old.setTitle(newEntry.getTitle()!= null && !newEntry.getTitle().equals("") ? newEntry.getTitle() : old.getTitle());
-            old.setContent(newEntry.getContent()!= null && !newEntry.getContent().equals("") ? newEntry.getContent() : old.getContent());
-            journalEntryService.saveEntry(old);
-            return new ResponseEntity<>(old, HttpStatus.OK);
-        } */
+                return new ResponseEntity<>(old, HttpStatus.OK);
+            }
+        }
+
+
        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
