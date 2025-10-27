@@ -25,8 +25,9 @@ public class SpringSecurity extends WebSecurityConfigurerAdapter {
         http is an instance of class HttpSecurity
         */
         http.authorizeRequests()
-                    .antMatchers("/journal/**","/user/**").authenticated() //needs authenticated
-                    .anyRequest().permitAll() // rest all are permitted
+                .antMatchers("/journal/**","/user/**").authenticated() //needs authenticated
+                .antMatchers("/admin/**").hasRole("ADMIN") // admin api's will get authenticated by those users who are admins
+                .anyRequest().permitAll() // rest all are permitted
                 .and()
                 .httpBasic();// no form based login, basic auth for postman
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf().disable();
