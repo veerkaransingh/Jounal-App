@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
                     It helps you build a UserDetails object, which Spring Security understands
                      */
                     //
+                    //
                     .username(user.getUserName()) //Set username for Spring -- "karan123"
                     .password(user.getPassword())  //Set encoded password --   $2a$10$ABC123...
                     .roles(user.getRoles().toArray(new String[0])) //Give roles/permissions  -- ["USER"]
