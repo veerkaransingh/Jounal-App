@@ -2,6 +2,8 @@ package com.RestApiwithKaran.journalApp.service;
 
 import com.RestApiwithKaran.journalApp.Repository.UserRepository;
 import com.RestApiwithKaran.journalApp.entity.User;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,6 +20,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTests {
     @Autowired
     private UserRepository userRepository;
+
+    /*@BeforeEach // if we want to initialize some things before running each test
+    void setUp(){
+
+    }*/
+
+    @AfterAll //this chunk will run after all tests have been run
+    void setUp(){
+
+    }
+
 
     @Disabled // this will not be run now
     @Test
