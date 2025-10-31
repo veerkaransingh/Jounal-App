@@ -19,7 +19,7 @@ public class SpringSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Override
-    protected void configure(HttpSecurity http) throws Exception { // Main method to define which URLs are open, which require authentication, and what kind of login to use.
+    protected void configure(HttpSecurity http) throws Exception   { // Main method to define which URLs are open, which require authentication, and what kind of login to use.
         /*This method provides a way to configure how requests are secured. It defines how request matching should be done and what
         security actions should be applied.
         http is an instance of class HttpSecurity
