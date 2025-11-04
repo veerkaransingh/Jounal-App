@@ -62,7 +62,7 @@ public class SpringSecurity extends WebSecurityConfigurerAdapter {
         // then... Defines how to verify passwords
         //Uses BCrypt to compare entered vs stored password
         super.configure(auth);
-        //
+
     }
 
     @Bean
